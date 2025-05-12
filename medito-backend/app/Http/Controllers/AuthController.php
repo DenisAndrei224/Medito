@@ -10,7 +10,7 @@ class AuthController extends Controller
 {
     public function register(Request $request) {
         $fields = $request->validate([
-            'name' => 'required|max:255',
+            'fullName' => 'required|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed', // password_confirmation required in the post request
             'role' => 'required|in:student,teacher,admin'
@@ -18,7 +18,7 @@ class AuthController extends Controller
 
         $user = User::create($fields);
 
-        $token = $user->createToken($request->name);
+        $token = $user->createToken($request->fullName);
 
         return [
             'user' => $user,
@@ -47,7 +47,7 @@ class AuthController extends Controller
             ];
         }
 
-        $token = $user->createToken($user->name);
+        $token = $user->createToken($user->fullName);
 
         return [
             'user' => $user,
