@@ -6,7 +6,7 @@
           <h4>Register</h4>
         </div>
         <div class="card-body">
-          <form>
+          <form (ngSubmit)="onSubmit()">
             <div class="mb-3">
               <label for="fullName" class="form-label">Full Name</label>
               <input
@@ -67,11 +67,7 @@
                 <option value="student">Student</option>
               </select>
             </div>
-            <button
-              type="submit"
-              class="btn btn-primary w-100"
-              (click)="onSubmit()"
-            >
+            <button type="submit" class="btn btn-primary w-100">
               Register
             </button>
           </form>
