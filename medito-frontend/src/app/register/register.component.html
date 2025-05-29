@@ -6,7 +6,8 @@
           <h4>Register</h4>
         </div>
         <div class="card-body">
-          <form (ngSubmit)="onSubmit()">
+          <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+            <!-- Full Name -->
             <div class="mb-3">
               <label for="fullName" class="form-label">Full Name</label>
               <input
@@ -15,9 +16,25 @@
                 id="fullName"
                 [(ngModel)]="form.fullName"
                 name="fullName"
+                #fullName="ngModel"
+                required
+                minlength="3"
                 placeholder="Enter your full name"
               />
+              <div
+                *ngIf="fullName.invalid && (fullName.dirty || fullName.touched)"
+                class="text-danger"
+              >
+                <div *ngIf="fullName.errors?.['required']">
+                  Full name is required
+                </div>
+                <div *ngIf="fullName.errors?.['minlength']">
+                  Full name must be at least 3 characters
+                </div>
+              </div>
             </div>
+
+            <!-- Email -->
             <div class="mb-3">
               <label for="email" class="form-label">Email address</label>
               <input
@@ -26,9 +43,23 @@
                 id="email"
                 [(ngModel)]="form.email"
                 name="email"
+                #email="ngModel"
+                required
+                email
                 placeholder="Enter your email"
               />
+              <div
+                *ngIf="email.invalid && (email.dirty || email.touched)"
+                class="text-danger"
+              >
+                <div *ngIf="email.errors?.['required']">Email is required</div>
+                <div *ngIf="email.errors?.['email']">
+                  Please enter a valid email
+                </div>
+              </div>
             </div>
+
+            <!-- Password -->
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
               <input
@@ -37,9 +68,25 @@
                 id="password"
                 [(ngModel)]="form.password"
                 name="password"
+                #password="ngModel"
+                required
+                minlength="6"
                 placeholder="Enter password"
               />
+              <div
+                *ngIf="password.invalid && (password.dirty || password.touched)"
+                class="text-danger"
+              >
+                <div *ngIf="password.errors?.['required']">
+                  Password is required
+                </div>
+                <div *ngIf="password.errors?.['minlength']">
+                  Password must be at least 6 characters
+                </div>
+              </div>
             </div>
+
+            <!-- Confirm Password -->
             <div class="mb-3">
               <label for="password_confirmation" class="form-label"
                 >Confirm Password</label
@@ -50,9 +97,35 @@
                 id="password_confirmation"
                 [(ngModel)]="form.password_confirmation"
                 name="password_confirmation"
+                #passwordConfirmation="ngModel"
+                required
                 placeholder="Confirm password"
               />
+              <div
+                *ngIf="
+                  (passwordConfirmation.invalid &&
+                    (passwordConfirmation.dirty ||
+                      passwordConfirmation.touched)) ||
+                  (passwordConfirmation.value &&
+                    passwordConfirmation.value !== password.value)
+                "
+                class="text-danger"
+              >
+                <div *ngIf="passwordConfirmation.errors?.['required']">
+                  Please confirm your password
+                </div>
+                <div
+                  *ngIf="
+                    passwordConfirmation.value &&
+                    passwordConfirmation.value !== password.value
+                  "
+                >
+                  Passwords don't match
+                </div>
+              </div>
             </div>
+
+            <!-- Role -->
             <div class="mb-4">
               <label for="role" class="form-label">Role</label>
               <select
@@ -60,14 +133,34 @@
                 id="role"
                 [(ngModel)]="form.role"
                 name="role"
+                #role="ngModel"
+                required
                 (change)="onSelectChange($event)"
               >
-                <option selected disabled>Select your role</option>
+                <option selected disabled value="">Select your role</option>
                 <option value="teacher">Teacher</option>
                 <option value="student">Student</option>
               </select>
+              <div
+                *ngIf="role.invalid && (role.dirty || role.touched)"
+                class="text-danger"
+              >
+                <div *ngIf="role.errors?.['required']">
+                  Please select a role
+                </div>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
+
+            <!-- Error message from server -->
+            <div *ngIf="isSignUpFailed" class="alert alert-danger">
+              {{ errorMessage }}
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary w-100"
+              [disabled]="registerForm.invalid"
+            >
               Register
             </button>
           </form>

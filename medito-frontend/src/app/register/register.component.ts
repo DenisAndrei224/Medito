@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -25,11 +26,20 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {}
 
   onSelectChange(event: any) {
-    console.log('Selected value:', event.target.value);
     this.form.role = event.target.value;
   }
 
-  onSubmit(): void {
+  onSubmit(form: NgForm): void {
+    if (form.invalid) {
+      return;
+    }
+
+    if (this.form.password !== this.form.password_confirmation) {
+      this.isSignUpFailed = true;
+      this.errorMessage = 'Passwords do not match';
+      return;
+    }
+
     const { fullName, email, password, password_confirmation, role } =
       this.form;
 
