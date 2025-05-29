@@ -13,13 +13,11 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<any>;
-  public currentUser: Observable<any>;
+  private currentUserSubject = new BehaviorSubject<any>(null);
+  public currentUser = this.currentUserSubject.asObservable();
+
   constructor(private http: HttpClient, private router: Router) {
-    this.currentUserSubject = new BehaviorSubject<any>(
-      JSON.parse(localStorage.getItem('currentUser') || 'null')
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
+    this.initializeAuthState();
   }
 
   public get currentUserValue() {

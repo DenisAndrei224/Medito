@@ -1,5 +1,17 @@
 .navbar-brand {
-    margin-left: 1rem;
-    font-family: sans-serif;
-    font-weight: bold;
+  margin-left: 1rem;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+/* Ensures proper dropdown alignment */
+.navbar-nav .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+/* Adds slight spacing between nav items */
+.nav-item {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
