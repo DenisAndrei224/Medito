@@ -1,56 +1,91 @@
-<nav class="navbar navbar-expand-sm navbar-dark bg-primary">
-  <div class="container">
-    <a class="navbar-brand" routerLink="/">Medito</a>
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary px-3">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold" routerLink="/">Medito</a>
+
+    <!-- Mobile Toggle -->
     <button
       class="navbar-toggler"
       type="button"
       data-bs-toggle="collapse"
       data-bs-target="#navbarContent"
+      aria-controls="navbarContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Collapsible Content -->
     <div class="collapse navbar-collapse" id="navbarContent">
+      <!-- Left-aligned navigation -->
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
+          <a
+            class="nav-link"
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Home
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/about" routerLinkActive="active"
-            >About</a
-          >
+          <a class="nav-link" routerLink="/about" routerLinkActive="active">
+            About
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/contact" routerLinkActive="active"
-            >Contact</a
-          >
+          <a class="nav-link" routerLink="/contact" routerLinkActive="active">
+            Contact
+          </a>
         </li>
       </ul>
 
+      <!-- Right-aligned auth controls -->
       <ul class="navbar-nav">
-        <!-- Show when logged in -->
-        <li class="nav-item dropdown" *ngIf="currentUser$ | async as user">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            data-bs-toggle="dropdown"
-          >
-            Welcome, {{ user.user?.fullName || user.user?.email }}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
-          </ul>
-        </li>
+        <!-- Authenticated User -->
+        <ng-container *ngIf="currentUser$ | async as user; else guestMenu">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle d-flex align-items-center"
+              href="#"
+              data-bs-toggle="dropdown"
+            >
+              <span class="me-2">
+                Welcome, {{ user.fullName || user.email || "User" }}
+              </span>
+              <i class="bi bi-person-circle"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+              <a class="dropdown-item" routerLink="/profile">
+                <i class="bi bi-person me-2"></i>Profile
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" (click)="logout()">
+                <i class="bi bi-person me-2"></i>Logout
+              </a>
+            </div>
+          </li>
+        </ng-container>
 
-        <!-- Show when logged out -->
-        <li class="nav-item" *ngIf="!(currentUser$ | async)">
-          <a class="nav-link" routerLink="/login">Login</a>
-        </li>
-        <li class="nav-item" *ngIf="!(currentUser$ | async)">
-          <a class="nav-link" routerLink="/register">Register</a>
-        </li>
+        <!-- Guest User -->
+        <ng-template #guestMenu>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active">
+              Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/register"
+              routerLinkActive="active"
+            >
+              Register
+            </a>
+          </li>
+        </ng-template>
       </ul>
     </div>
   </div>
