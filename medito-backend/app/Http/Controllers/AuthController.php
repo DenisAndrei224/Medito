@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,12 +19,12 @@ class AuthController extends Controller
 
         $user = User::create($fields);
 
-        $token = $user->createToken($request->fullName);
+        $token = $user->createToken($user->fullName)->plainTextToken;
 
-        return [
+        return response()->json([
             'user' => $user,
-            'token' => $token->plainTextToken
-        ];
+            'token' => $token
+        ],201);
     }
 
     public function login(Request $request) {
@@ -42,24 +43,30 @@ class AuthController extends Controller
 
         // If the user doesn't exist or the password doesn't correspond
         if(!$user || !Hash::check($request->password, $user->password)) {
-            return [
-                'message' => 'The provided credentials are incorrect.'
-            ];
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
         }
 
-        $token = $user->createToken($user->fullName);
+        $token = $user->createToken($user->fullName)->plainTextToken;
 
-        return [
+        return response()->json([
             'user' => $user,
-            'token' => $token->plainTextToken
-        ];
+            'token' => $token
+        ]);
 
     }
 
     public function logout(Request $request) {
         $request->user()->tokens()->delete();
-        return [
-            'message' => 'You are logged out.'
-        ];
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
+    }
+
+    public function user(Request $request):JsonResponse {
+        return response()->json([
+            'user' => $request->user()
+        ]);
     }
 }
