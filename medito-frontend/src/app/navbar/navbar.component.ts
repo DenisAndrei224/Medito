@@ -24,8 +24,17 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: () => {
+        // Navigation is already handled in authService
+      },
+      error: (err) => {
+        console.error('Logout error:', err);
+        // Force clear and redirect if logout fails
+        this.authService.clearAuthData();
+        this.router.navigate(['/login']);
+      },
+    });
   }
 
   // Helper function to safely access user properties
