@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  tap,
+  catchError,
+  throwError,
+  finalize,
+} from 'rxjs';
 import { Router } from '@angular/router';
 
 // Types
@@ -75,15 +82,30 @@ export class AuthService {
   }
 
   // Logout the user
-  logout(): void {
-    // Remove user from local storage
-    localStorage.removeItem('currentUser');
+  logout(): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken()}`,
+      Accept: 'application/json',
+    });
+
+    return this.http.post(`${API_URL}logout`, {}, { headers }).pipe(
+      tap(() => this.clearAuthData()),
+      catchError((error) => {
+        this.clearAuthData();
+        return throwError(error);
+      }),
+      finalize(() => {
+        // Ensure navigation happens after all operations
+        this.router.navigate(['/login']);
+      })
+    );
+  }
+
+  public clearAuthData(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
-
-    // Call Laravel's logout endpoint if needed
-    this.http.post(`${API_URL}logout`, {}).subscribe();
   }
 
   // Verify if user is authenticated
@@ -93,7 +115,7 @@ export class AuthService {
 
   // Get auth token
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('token') || '';
   }
 
   // Initialize auth state on app start
@@ -104,5 +126,16 @@ export class AuthService {
     } else {
       this.logout();
     }
+  }
+
+  updateCurrentUser(updatedUserData: Partial<User>): void {
+    const currentUser = this.currentUserValue;
+    if (!currentUser) return;
+
+    const updatedUser = { ...currentUser, ...updatedUserData };
+
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+    this.currentUserSubject.next(updatedUser);
   }
 }
