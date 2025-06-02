@@ -6,9 +6,11 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AuthInterceptor } from './services/auth.interceptor';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +18,7 @@ import { RouterModule } from '@angular/router';
     NavbarComponent,
     RegisterComponent,
     LoginComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,
@@ -24,7 +27,13 @@ import { RouterModule } from '@angular/router';
     FormsModule,
     RouterModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
