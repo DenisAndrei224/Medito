@@ -6,13 +6,13 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8000/api/user';
+  private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
   // Update user profile
   updateProfile(profileData: any): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/profile`, profileData);
+    return this.http.patch(`${this.apiUrl}/user/profile`, profileData);
   }
 
   // Update avatar
@@ -28,6 +28,6 @@ export class UserService {
 
   // Get current user
   getCurrentUser(): Observable<any> {
-    return this.http.get(this.apiUrl);
+    return this.http.get(`${this.apiUrl}/user`);
   }
 }
