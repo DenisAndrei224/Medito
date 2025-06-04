@@ -17,7 +17,11 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     // Skip for login/register requests
-    if (request.url.includes('login') || request.url.includes('register')) {
+    if (
+      request.url.includes('login') ||
+      request.url.includes('register') ||
+      request.url.includes('logout')
+    ) {
       return next.handle(request);
     }
 
