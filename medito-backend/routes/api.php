@@ -37,17 +37,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', function (Request $request) {
             return $request->user();
         });
-        
+
         // Profile update route
         Route::patch('/profile', [UserController::class, 'updateProfile']);
-        
+
         // Avatar upload route
         Route::post('/avatar', [UserController::class, 'updateAvatar']);
     });
-    
+
     // Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
-    
+
     // Posts resource
     Route::apiResource('posts', PostController::class);
 });
