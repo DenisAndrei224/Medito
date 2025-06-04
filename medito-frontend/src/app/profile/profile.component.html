@@ -18,12 +18,18 @@
               (change)="onFileSelected($event)"
               accept="image/*"
               hidden
+              [disabled]="isLoading"
             />
             <button
               class="btn btn-sm btn-outline-primary"
               (click)="fileInput.click()"
+              [disabled]="isLoading"
             >
-              Change Avatar
+              <span
+                *ngIf="isLoading"
+                class="spinner-border spinner-border-sm me-1"
+              ></span>
+              {{ isLoading ? "Uploading..." : "Change Avatar" }}
             </button>
           </div>
 
@@ -33,6 +39,7 @@
             type="text"
             class="form-control my-3"
             [(ngModel)]="user.fullName"
+            [disabled]="isLoading"
           />
         </div>
       </div>
@@ -46,7 +53,8 @@
             class="btn btn-sm"
             [class.btn-primary]="!isEditing"
             [class.btn-outline-secondary]="isEditing"
-            (click)="isEditing = !isEditing"
+            (click)="isEditing ? cancelEdit() : (isEditing = true)"
+            [disabled]="isLoading"
           >
             {{ isEditing ? "Cancel" : "Edit" }}
           </button>
@@ -55,7 +63,14 @@
         <div class="card-body">
           <div class="mb-3">
             <label>Email</label>
-            <p>{{ user.email }}</p>
+            <p *ngIf="!isEditing">{{ user.email }}</p>
+            <input
+              *ngIf="isEditing"
+              type="email"
+              class="form-control"
+              [(ngModel)]="user.email"
+              [disabled]="isLoading"
+            />
           </div>
 
           <div class="mb-3">
@@ -67,8 +82,13 @@
             *ngIf="isEditing"
             class="btn btn-primary"
             (click)="updateProfile()"
+            [disabled]="isLoading"
           >
-            Save Changes
+            <span
+              *ngIf="isLoading"
+              class="spinner-border spinner-border-sm me-1"
+            ></span>
+            {{ isLoading ? "Saving..." : "Save Changes" }}
           </button>
         </div>
       </div>

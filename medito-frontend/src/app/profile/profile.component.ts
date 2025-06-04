@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
-import { User } from '../models/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -10,8 +8,7 @@ import { User } from '../models/user.model';
 })
 export class ProfileComponent implements OnInit {
   // Initialize with default values
-  user: User = {
-    id: 0,
+  user: any = {
     fullName: '',
     email: '',
     role: '',
@@ -19,24 +16,30 @@ export class ProfileComponent implements OnInit {
   };
 
   isEditing = false;
-  isUploading = false;
-  errorMessage = '';
   selectedFile: File | null = null;
-  previewUrl: string = 'assets/default-avatar.jpg';
+  previewUrl: string | ArrayBuffer | null = null;
+  isLoading = false;
 
-  constructor(
-    private authService: AuthService,
-    private userService: UserService
-  ) {
-    // Safely assign user data
-    const currentUser = this.authService.currentUserValue;
-    if (currentUser) {
-      this.user = { ...this.user, ...currentUser };
-      this.previewUrl = currentUser.avatar || this.previewUrl;
-    }
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.loadUserProfile();
   }
 
-  ngOnInit(): void {}
+  loadUserProfile(): void {
+    this.isLoading = true;
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.user = user;
+        this.previewUrl = user.avatar || 'assets/default-avatar.jpg';
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading profile', err);
+        this.isLoading = false;
+      },
+    });
+  }
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -45,14 +48,36 @@ export class ProfileComponent implements OnInit {
 
       // Create preview
       const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.previewUrl = e.target.result;
+      reader.onload = () => {
+        this.previewUrl = reader.result;
       };
       reader.readAsDataURL(file);
+
+      // Upload immediately when file is selected
+      this.uploadAvatar();
     }
   }
 
+  uploadAvatar(): void {
+    if (!this.selectedFile) return;
+
+    this.isLoading = true;
+    this.userService.updateAvatar(this.selectedFile).subscribe({
+      next: (response) => {
+        this.user.avatar = response.avatar;
+        this.previewUrl = response.avatar;
+        this.selectedFile = null;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error uploading avatar', err);
+        this.isLoading = false;
+      },
+    });
+  }
+
   updateProfile(): void {
+    this.isLoading = true;
     this.userService
       .updateProfile({
         fullName: this.user.fullName,
@@ -60,34 +85,20 @@ export class ProfileComponent implements OnInit {
       })
       .subscribe({
         next: (response) => {
-          this.authService.updateCurrentUser(response.user);
+          this.user = response.user;
           this.isEditing = false;
+          this.isLoading = false;
         },
-        error: (err) => console.error('Update failed', err),
+        error: (err) => {
+          console.error('Error updating profile', err);
+          this.isLoading = false;
+        },
       });
   }
 
-  uploadAvatar(): void {
-    if (!this.selectedFile) return;
-
-    this.isUploading = true;
-    this.errorMessage = '';
-
-    this.userService.updateAvatar(this.selectedFile).subscribe({
-      next: (response) => {
-        // Update both local state and auth service
-        this.user.avatar = response.avatar;
-        this.previewUrl = response.avatar;
-        this.authService.updateCurrentUser({ avatar: response.avatar });
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to upload avatar';
-        this.previewUrl = this.user?.avatar || 'assets/default-avatar.jpg';
-      },
-      complete: () => {
-        this.isUploading = false;
-        this.selectedFile = null;
-      },
-    });
+  cancelEdit(): void {
+    // Reload original data
+    this.loadUserProfile();
+    this.isEditing = false;
   }
 }
