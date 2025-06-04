@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $fields = $request->validate([
             'fullName' => 'required|max:255',
             'email' => 'required|email|unique:users',
@@ -24,10 +25,11 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token
-        ],201);
+        ], 201);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $request->validate([
             'email' => 'required|email|exists:users',
             'password' => 'required'
@@ -42,7 +44,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         // If the user doesn't exist or the password doesn't correspond
-        if(!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'Invalid credentials'
             ], 401);
@@ -54,17 +56,18 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token
         ]);
-
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $request->user()->tokens()->delete();
         return response()->json([
             'message' => 'Successfully logged out'
         ]);
     }
 
-    public function user(Request $request):JsonResponse {
+    public function user(Request $request): JsonResponse
+    {
         return response()->json([
             'user' => $request->user()
         ]);
