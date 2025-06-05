@@ -7,10 +7,12 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { ProfileComponent } from './profile/profile.component';
+import { CreatePostComponent } from './create-post/create-post.component';
+import { PostListComponent } from './post-list/post-list.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,8 @@ import { ProfileComponent } from './profile/profile.component';
     RegisterComponent,
     LoginComponent,
     ProfileComponent,
+    CreatePostComponent,
+    PostListComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,6 +30,7 @@ import { ProfileComponent } from './profile/profile.component';
     HttpClientModule,
     FormsModule,
     RouterModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {
