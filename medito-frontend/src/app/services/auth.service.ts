@@ -138,4 +138,8 @@ export class AuthService {
 
     this.currentUserSubject.next(updatedUser);
   }
+
+  setCurrentUser(user: any): void {
+    this.currentUserSubject.next(user);
+  }
 }
