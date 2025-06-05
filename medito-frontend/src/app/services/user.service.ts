@@ -30,4 +30,8 @@ export class UserService {
   getCurrentUser(): Observable<any> {
     return this.http.get(`${this.apiUrl}/user`);
   }
+
+  getUsersByRole(role: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/by-role/${role}`);
+  }
 }
