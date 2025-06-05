@@ -11,12 +11,14 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'title',
         'body',
     ];
 
     // Each post is made by one user
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }
