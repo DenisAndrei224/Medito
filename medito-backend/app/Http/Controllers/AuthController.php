@@ -15,10 +15,13 @@ class AuthController extends Controller
             'fullName' => 'required|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed', // password_confirmation required in the post request
-            'role' => 'required|in:student,teacher,admin'
+            'role' => 'required|in:student,teacher,admin',
         ]);
 
         $user = User::create($fields);
+
+        $userData = $fields;
+        $userData['avatar'] = null;
 
         $token = $user->createToken($user->fullName)->plainTextToken;
 
