@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth:sanctum')->except(['index', 'show']);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +20,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::all();
+        return Post::with('user:id,fullName,avatar,role')->get();
     }
 
     /**
@@ -38,7 +39,10 @@ class PostController extends Controller
         // Creating a post through a user (the method is looking for an authenticated user)
         $post = $request->user()->posts()->create($fields);
 
-        return $post;
+        return response()->json([
+            'message' => 'Post created successfully',
+            'post' => $post->load('user:id,fullName,avatar,role')
+        ], 201);
     }
 
     /**
@@ -49,7 +53,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post;
+        return $post->load('user:id,fullName,avatar,role');
     }
 
     /**
@@ -82,7 +86,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         Gate::authorize('modify', $post);
-        
+
         $post->delete();
         return ['message' => 'The post was deleted!'];
     }
