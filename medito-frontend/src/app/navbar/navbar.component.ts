@@ -12,6 +12,7 @@ import { User } from '../models/user.model';
 export class NavbarComponent implements OnInit {
   currentUser$: Observable<User | null>;
   isLoggedIn = false;
+  userRole: string = '';
 
   constructor(public authService: AuthService, private router: Router) {
     this.currentUser$ = this.authService.currentUser;
@@ -20,6 +21,7 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser$.subscribe((user) => {
       this.isLoggedIn = !!user;
+      this.userRole = user?.role || '';
     });
   }
 
@@ -40,5 +42,15 @@ export class NavbarComponent implements OnInit {
   // Helper function to safely access user properties
   getUserName(user: User | null): string {
     return user?.fullName || user?.email || 'Account';
+  }
+
+  // Check if user has specific role(s)
+  hasRole(role: string | string[]): boolean {
+    if (!this.userRole) return false;
+
+    if (Array.isArray(role)) {
+      return role.includes(this.userRole);
+    }
+    return this.userRole === role;
   }
 }
