@@ -1,0 +1,63 @@
+<div class="container py-4">
+  <h2>Create New Post</h2>
+
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        formControlName="title"
+        [class.is-invalid]="
+          postForm.get('title')?.invalid && postForm.get('title')?.touched
+        "
+      />
+
+      <div
+        *ngIf="postForm.get('title')?.errors?.['required'] && postForm.get('title')?.touched"
+        class="invalid-feedback"
+      >
+        Title is required
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="content" class="form-label">Content</label>
+      <textarea
+        class="form-control"
+        id="content"
+        rows="5"
+        formControlName="body"
+        [class.is-invalid]="
+          postForm.get('body')?.invalid && postForm.get('body')?.touched
+        "
+      ></textarea>
+
+      <div
+        *ngIf="postForm.get('body')?.errors?.['required'] && postForm.get('body')?.touched"
+        class="invalid-feedback"
+      >
+        Content is required
+      </div>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger mb-3">
+      {{ error }}
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="postForm.invalid || isSubmitting"
+    >
+      <span
+        *ngIf="isSubmitting"
+        class="spinner-border spinner-border-sm me-1"
+      ></span>
+      {{ isSubmitting ? "Creating..." : "Create Post" }}
+    </button>
+
+    <a routerLink="/posts" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
