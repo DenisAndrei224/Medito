@@ -7,6 +7,7 @@ import {
   catchError,
   throwError,
   finalize,
+  map,
 } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -16,6 +17,7 @@ interface User {
   fullName: string;
   email: string;
   avatar?: string;
+  role: string;
 }
 
 interface AuthResponse {
@@ -53,7 +55,7 @@ export class AuthService {
     email: string,
     password: string,
     password_confirmation: string,
-    role: Number
+    role: string
   ): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${API_URL}register`, {
       fullName,
@@ -141,5 +143,11 @@ export class AuthService {
 
   setCurrentUser(user: any): void {
     this.currentUserSubject.next(user);
+  }
+
+  isTeacher(): Observable<boolean> {
+    return this.currentUserSubject.pipe(
+      map((user) => user?.role === 'teacher') // Check if user exists and has 'teacher' role
+    );
   }
 }
