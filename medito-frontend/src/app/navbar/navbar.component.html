@@ -46,6 +46,27 @@
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" routerLink="/posts/create">Create Post</a>
         </li>
+        <li class="nav-item" *ngIf="isLoggedIn && hasRole('teacher')">
+          <a
+            class="nav-link"
+            routerLink="/my-requests"
+            routerLinkActive="active"
+            >Requests</a
+          >
+        </li>
+        <li class="nav-item" *ngIf="userRole === 'student'">
+          <a class="nav-link" routerLink="/my-teacher" routerLinkActive="active"
+            >My Teacher</a
+          >
+        </li>
+        <li class="nav-item" *ngIf="userRole === 'teacher'">
+          <a
+            class="nav-link"
+            routerLink="/teacher/manage-resources"
+            routerLinkActive="active"
+            >Manage Resources</a
+          >
+        </li>
       </ul>
 
       <!-- Right-aligned auth controls -->
