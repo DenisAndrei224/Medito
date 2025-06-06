@@ -1,0 +1,76 @@
+<div class="container my-4">
+  <h2 class="text-center mb-4">My Incoming Requests</h2>
+
+  <div *ngIf="isLoading" class="alert alert-info text-center" role="alert">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 mb-0">Loading requests...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success" role="alert">
+    {{ successMessage }}
+  </div>
+
+  <div
+    *ngIf="
+      !isLoading &&
+      incomingRequests.length === 0 &&
+      !errorMessage &&
+      !successMessage
+    "
+    class="alert alert-warning text-center"
+    role="alert"
+  >
+    You have no pending incoming requests.
+  </div>
+
+  <div *ngIf="!isLoading && incomingRequests.length > 0" class="list-group">
+    <div
+      *ngFor="let request of incomingRequests"
+      class="list-group-item d-flex align-items-center mb-3 shadow-sm rounded"
+    >
+      <div class="me-3">
+        <img
+          [src]="request.sender.avatar || 'assets/default-avatar.jpg'"
+          class="rounded-circle border border-primary border-2"
+          alt="Sender Avatar"
+          style="width: 60px; height: 60px; object-fit: cover"
+        />
+      </div>
+      <div class="flex-grow-1">
+        <h5 class="mb-1">
+          Request from
+          <span class="text-primary">{{ request.sender.fullName }}</span>
+        </h5>
+        <small class="text-muted">
+          Sent on {{ request.created_at | date : "medium" }}
+        </small>
+        <span
+          class="badge ms-2"
+          [ngClass]="{
+            'bg-warning': request.status === 'pending',
+            'bg-success': request.status === 'accepted',
+            'bg-danger': request.status === 'denied'
+          }"
+          >{{ request.status | titlecase }}</span
+        >
+      </div>
+      <div class="ms-auto" *ngIf="request.status === 'pending'">
+        <button
+          class="btn btn-success btn-sm me-2"
+          (click)="acceptRequest(request.id)"
+        >
+          <i class="bi bi-check-lg"></i> Accept
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="denyRequest(request.id)">
+          <i class="bi bi-x-lg"></i> Deny
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
