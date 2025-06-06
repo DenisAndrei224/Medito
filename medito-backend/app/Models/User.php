@@ -7,8 +7,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -28,7 +31,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'avatar'
+        'avatar',
+        'teacher_id',
     ];
 
     /**
@@ -92,5 +96,52 @@ class User extends Authenticatable
 
         // If 'avatar' field is null, return the default avatar URL
         return asset('images/default-avatar.jpg');
+    }
+
+    /**
+     * A student belongs to a teacher.
+     */
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    /**
+     * A teacher has many students.
+     */
+    public function students(): HasMany
+    {
+        return $this->hasMany(User::class, 'teacher_id');
+    }
+
+    /**
+     * A teacher has many resources.
+     */
+    public function resources(): HasMany
+    {
+        return $this->hasMany(Resource::class, 'teacher_id');
+    }
+
+    /**
+     * A student (User) can have many resources assigned to them.
+     * The pivot table is 'resource_student'.
+     * 'student_id' is the foreign key on the pivot table for this model (User).
+     * 'resource_id' is the foreign key on the pivot table for the related model (Resource).
+     */
+    public function assignedResources(): BelongsToMany
+    {
+        return $this->belongsToMany(Resource::class, 'resource_student', 'student_id', 'resource_id');
+    }
+
+    // Requests sent by this user
+    public function sentRequests()
+    {
+        return $this->hasMany(Request::class, 'sender_id');
+    }
+
+    // Requests received by this user
+    public function receivedRequests()
+    {
+        return $this->hasMany(Request::class, 'receiver_id');
     }
 }
