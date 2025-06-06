@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: 'http://localhost:8000/api', // Your Laravel API URL
+  baseUrl: 'http://localhost:8000', // Your Laravel base URL (for storage files)
 };
 
 /*
