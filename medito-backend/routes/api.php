@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\TeacherController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +52,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Posts resource
     Route::apiResource('posts', PostController::class);
+
+    Route::post('/requests/send', [RequestController::class, 'send']);
+    Route::get('/requests/incoming', [RequestController::class, 'incomingRequests']);
+    Route::post('/requests/accept', [RequestController::class, 'accept']);
+    Route::post('/requests/deny', [RequestController::class, 'deny']);
+
+    Route::get('/my-teacher-page', [TeacherController::class, 'myTeacherPage']);
+
+    Route::post('/teacher/resources', [TeacherController::class, 'storeResource']);
+
+    Route::get('/teacher/students', [TeacherController::class, 'getMyStudents']); // Added route for fetching students for teacher
 });
