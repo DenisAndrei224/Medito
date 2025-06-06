@@ -1,0 +1,147 @@
+<div class="container my-5">
+  <div class="card shadow-sm p-4">
+    <h2 class="card-title text-center mb-4">Manage Resources</h2>
+
+    <div
+      *ngIf="message"
+      class="alert fade show"
+      [ngClass]="{ 'alert-success': !isError, 'alert-danger': isError }"
+      role="alert"
+    >
+      <span [innerHTML]="message"></span>
+      <button
+        type="button"
+        class="btn-close"
+        (click)="message = null"
+        aria-label="Close"
+      ></button>
+    </div>
+
+    <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="title" class="form-label">Title:</label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': f['title'].touched && f['title'].errors }"
+        />
+        <div
+          *ngIf="f['title'].touched && f['title'].errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f['title'].errors['required']">Title is required.</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description:</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="type" class="form-label">Resource Type:</label>
+        <select id="type" formControlName="type" class="form-select">
+          <option *ngFor="let type of resourceTypes" [value]="type.value">
+            {{ type.viewValue }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngIf="f['type'].value === 'file'" class="mb-3">
+        <label for="resource_file" class="form-label">File:</label>
+        <input
+          id="resource_file"
+          type="file"
+          (change)="onFileSelected($event)"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              f['resource_file'].touched && f['resource_file'].errors
+          }"
+        />
+        <div
+          *ngIf="f['resource_file'].touched && f['resource_file'].errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f['resource_file'].errors['required']">
+            File is required for 'File' type.
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="f['type'].value === 'link'" class="mb-3">
+        <label for="url" class="form-label">URL:</label>
+        <input
+          id="url"
+          type="url"
+          formControlName="url"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': f['url'].touched && f['url'].errors }"
+        />
+        <div
+          *ngIf="f['url'].touched && f['url'].errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f['url'].errors['required']">
+            URL is required for 'Link' type.
+          </div>
+          <div *ngIf="f['url'].errors['pattern']">
+            Please enter a valid URL.
+          </div>
+        </div>
+      </div>
+
+      <h3 class="mt-4 mb-3">Assign to Students:</h3>
+      <div class="mb-3">
+        <div class="card p-3 student-list-scrollable">
+          <div
+            *ngIf="students.length === 0 && !message"
+            class="text-center text-muted py-3"
+          >
+            Loading students...
+          </div>
+          <div
+            *ngIf="students.length === 0 && message && isError"
+            class="text-center text-muted py-3"
+          >
+            No students found.
+          </div>
+          <div *ngFor="let student of students" class="form-check mb-2">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              [id]="'student-' + student.id"
+              [value]="student.id"
+              (change)="onStudentSelectionChange($event, student.id)"
+            />
+            <label class="form-check-label" [for]="'student-' + student.id">
+              {{ student.fullName }} ({{ student.email }})
+            </label>
+          </div>
+        </div>
+        <div
+          *ngIf="studentIdsArray.touched && studentIdsArray.errors"
+          class="invalid-feedback d-block"
+        >
+          <div *ngIf="studentIdsArray.errors['required']">
+            Select at least one student.
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 mt-4"
+        [disabled]="resourceForm.invalid"
+      >
+        Create & Assign Resource
+      </button>
+    </form>
+  </div>
+</div>
