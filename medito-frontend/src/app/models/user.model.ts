@@ -3,5 +3,6 @@ export interface User {
   fullName: string;
   email: string;
   role?: string;
-  avatar?: string; // This can be stored as a URL or Base64 string
+  avatar_url?: string; // This can be stored as a URL or Base64 string
+  teacher_id?: number;
 }
