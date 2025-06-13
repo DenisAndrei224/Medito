@@ -22,4 +22,17 @@ export class PostService {
   createPost(postData: { title: string; content: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/posts`, postData);
   }
+
+  updatePost(
+    id: number,
+    postData: { title: string; body: string }
+  ): Observable<Post> {
+    // Note: Laravel's update expects 'title' and 'body' based on your validate method.
+    // Ensure your Angular form sends 'title' and 'body'
+    return this.http.patch<Post>(`${this.apiUrl}/posts/${id}`, postData);
+  }
+
+  deletePost(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/posts/${id}`);
+  }
 }
