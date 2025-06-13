@@ -1,0 +1,101 @@
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg border-0 rounded-lg">
+        <div
+          class="card-header bg-primary text-white text-center p-4 rounded-top-lg"
+        >
+          <h2 class="mb-0">Edit Post</h2>
+        </div>
+        <div class="card-body p-4">
+          <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading post for editing...</p>
+          </div>
+
+          <div
+            *ngIf="error"
+            class="alert alert-danger text-center py-3"
+            role="alert"
+          >
+            {{ error }}
+          </div>
+
+          <div
+            *ngIf="successMessage"
+            class="alert alert-success text-center py-3"
+            role="alert"
+          >
+            {{ successMessage }}
+          </div>
+
+          <form
+            *ngIf="!loading && !error"
+            [formGroup]="postForm"
+            (ngSubmit)="onSubmit()"
+          >
+            <div class="mb-3">
+              <label for="title" class="form-label">Post Title</label>
+              <input
+                id="title"
+                type="text"
+                class="form-control"
+                [class.is-invalid]="isInvalid('title')"
+                formControlName="title"
+              />
+              <div *ngIf="isInvalid('title')" class="invalid-feedback">
+                <span *ngIf="postForm.get('title')?.errors?.['required']"
+                  >Title is required.</span
+                >
+                <span *ngIf="postForm.get('title')?.errors?.['maxlength']"
+                  >Title cannot exceed 255 characters.</span
+                >
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="body" class="form-label">Post Content</label>
+              <textarea
+                id="body"
+                rows="8"
+                class="form-control"
+                [class.is-invalid]="isInvalid('body')"
+                formControlName="body"
+              ></textarea>
+              <div *ngIf="isInvalid('body')" class="invalid-feedback">
+                <span *ngIf="postForm.get('body')?.errors?.['required']"
+                  >Content is required.</span
+                >
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                [disabled]="submitting || postForm.invalid"
+              >
+                <span
+                  *ngIf="submitting"
+                  class="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                {{ submitting ? "Updating..." : "Update Post" }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-lg"
+                [routerLink]="['/posts', postId]"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
