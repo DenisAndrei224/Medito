@@ -16,11 +16,11 @@ export class UserService {
   }
 
   // Update avatar
-  updateAvatar(file: File): Observable<{ avatar: string }> {
+  updateAvatar(file: File): Observable<{ avatar_url: string }> {
     const formData = new FormData();
     formData.append('avatar', file);
 
-    return this.http.post<{ avatar: string }>(
+    return this.http.post<{ avatar_url: string }>(
       `${this.apiUrl}/user/avatar`,
       formData
     );
