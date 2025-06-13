@@ -11,6 +11,7 @@ import { PostDetailComponent } from './post-detail/post-detail.component';
 import { MyRequestsComponent } from './my-requests/my-requests.component';
 import { MyTeacherPageComponent } from './pages/my-teacher-page/my-teacher-page.component';
 import { ManageResourcesComponent } from './manage-resources/manage-resources/manage-resources.component';
+import { PostEditComponent } from './post-edit/post-edit.component';
 
 const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -30,11 +31,16 @@ const routes: Routes = [
     path: 'posts',
     children: [
       { path: '', component: PostListComponent },
-      { path: ':id', component: PostDetailComponent },
       {
         path: 'create',
         component: CreatePostComponent,
         canActivate: [AuthGuard],
+      },
+      { path: ':id', component: PostDetailComponent },
+      {
+        path: ':id/edit',
+        component: PostEditComponent,
+        canActivate: [AuthGuard, TeacherGuard],
       },
     ],
   },
