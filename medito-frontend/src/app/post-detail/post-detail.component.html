@@ -49,6 +49,29 @@
                 <span *ngIf="!isRequestSending">Send Request</span>
                 <span *ngIf="isRequestSending">Sending...</span>
               </button>
+              <ng-container
+                *ngIf="
+                  post &&
+                  post.user &&
+                  currentUserId !== null &&
+                  post.user.id === currentUserId &&
+                  (authService.currentUser | async)?.role === 'teacher'
+                "
+              >
+                <button
+                  [routerLink]="['/posts', post.id, 'edit']"
+                  class="btn btn-sm btn-info text-white ms-2"
+                >
+                  Edit Post
+                </button>
+
+                <button
+                  (click)="confirmDelete()"
+                  class="btn btn-sm btn-danger ms-2"
+                >
+                  Delete Post
+                </button>
+              </ng-container>
             </div>
           </div>
           <h1 class="card-title mb-0 display-6">{{ post.title }}</h1>
