@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router'; // Import ActivatedRoute
+import { ActivatedRoute, Router } from '@angular/router'; // Import ActivatedRoute
 import { PostService } from '../services/post.service'; // Adjust path if needed
 import { RequestService } from '../services/request.service';
 import { AuthService } from '../services/auth.service';
@@ -28,7 +28,8 @@ export class PostDetailComponent implements OnInit {
     private route: ActivatedRoute, // Inject ActivatedRoute to access URL parameters
     private postService: PostService, // Inject PostService to call the API
     private requestService: RequestService,
-    private authService: AuthService
+    public authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -115,16 +116,56 @@ export class PostDetailComponent implements OnInit {
   }
 
   showSendRequestButton(): boolean {
-    return (
-      this.post !== null &&
-      this.post.user !== undefined &&
-      this.post.user.id !== undefined &&
-      this.currentUserId !== null &&
-      this.post.user.id !== this.currentUserId
-    );
+    const currentUser = this.authService.currentUserValue;
+
+    // Ensure post, post.user, and currentUserId are not null
+    if (
+      !this.post ||
+      !this.post.user ||
+      this.currentUserId === null ||
+      !currentUser ||
+      currentUser.role !== 'student'
+    ) {
+      return false;
+    }
+    // Now, safely compare the IDs
+    return this.post.user.id !== this.currentUserId;
   }
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  confirmDelete(): void {
+    if (
+      confirm(
+        'Are you sure you want to delete this post? This action cannot be undone.'
+      )
+    ) {
+      this.deletePost();
+    }
+  }
+
+  // Add a method to handle post deletion
+  deletePost(): void {
+    if (this.postId === null) {
+      this.error = 'Cannot delete: Post ID is missing.';
+      return;
+    }
+
+    // You will implement postService.deletePost() next!
+    this.postService.deletePost(this.postId).subscribe({
+      next: () => {
+        // Handle successful deletion
+        alert('Post deleted successfully!');
+        // Optionally, navigate back to the posts list after deletion
+        this.router.navigate(['/posts']); // Make sure to inject Router in constructor
+      },
+      error: (err) => {
+        // Handle error during deletion
+        console.error('Error deleting post:', err);
+        this.error = 'Failed to delete post. Please try again.';
+      },
+    });
   }
 }
