@@ -12,7 +12,7 @@ export class ProfileComponent implements OnInit {
     fullName: '',
     email: '',
     role: '',
-    avatar: '',
+    avatar_url: '',
   };
 
   isEditing = false;
@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit {
     this.userService.getCurrentUser().subscribe({
       next: (user) => {
         this.user = user;
-        this.previewUrl = user.avatar || 'assets/default-avatar.jpg';
+        this.previewUrl = user.avatar_url || 'assets/default-avatar.jpg';
         this.isLoading = false;
       },
       error: (err) => {
@@ -64,8 +64,8 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.userService.updateAvatar(this.selectedFile).subscribe({
       next: (response) => {
-        this.user.avatar = response.avatar;
-        this.previewUrl = response.avatar;
+        this.user.avatar = response.avatar_url;
+        this.previewUrl = response.avatar_url;
         this.selectedFile = null;
         this.isLoading = false;
       },
