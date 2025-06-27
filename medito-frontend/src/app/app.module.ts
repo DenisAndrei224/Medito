@@ -18,7 +18,6 @@ import { MyRequestsComponent } from './my-requests/my-requests.component';
 import { MyTeacherPageComponent } from './pages/my-teacher-page/my-teacher-page.component';
 import { ManageResourcesComponent } from './manage-resources/manage-resources/manage-resources.component';
 import { PostEditComponent } from './post-edit/post-edit.component';
-import { MessagesComponent } from './messages/messages.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +33,6 @@ import { MessagesComponent } from './messages/messages.component';
     MyTeacherPageComponent,
     ManageResourcesComponent,
     PostEditComponent,
-    MessagesComponent,
   ],
   imports: [
     BrowserModule,

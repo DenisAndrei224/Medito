@@ -1,34 +1,20 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
 import { User } from '../models/user.model';
-import { MessageService } from '../services/message.service'; // Add this import
-import { EchoService } from '../services/echo.service';
-import { Message, PusherError } from '../models/message.model';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent implements OnInit {
   currentUser$: Observable<User | null>;
   isLoggedIn = false;
   userRole: string = '';
-  unreadCount = 0;
 
-  private refreshInterval: any;
-
-  private channel: any;
-
-  constructor(
-    public authService: AuthService,
-    private router: Router,
-    private messageService: MessageService,
-    private echoService: EchoService
-  ) {
+  constructor(public authService: AuthService, private router: Router) {
     this.currentUser$ = this.authService.currentUser;
   }
 
@@ -36,45 +22,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.currentUser$.subscribe((user) => {
       this.isLoggedIn = !!user;
       this.userRole = user?.role || '';
-
-      if (this.isLoggedIn && user) {
-        // this.loadUnreadCount();
-        this.setupMessageListener(user.id);
-      } else {
-        this.cleanupMessageListener();
-      }
     });
   }
-
-  private setupMessageListener(userId: number): void {
-    // Clean up any existing listener first
-    this.cleanupMessageListener();
-
-    this.channel = this.echoService
-      .privateChannel(userId)
-      .listen('.message.sent', (data: any) => {
-        // this.loadUnreadCount();
-      })
-      .error((error: any) => {
-        console.error('Pusher error:', error);
-      });
-  }
-
-  private cleanupMessageListener(): void {
-    if (this.channel) {
-      this.channel.stopListening('.message.sent');
-      if (this.isLoggedIn && this.authService.currentUserValue?.id) {
-        this.echoService.leaveChannel(this.authService.currentUserValue.id);
-      }
-      this.channel = null;
-    }
-  }
-
-  // private loadUnreadCount(): void {
-  //   this.messageService.getUnreadCount().subscribe((count) => {
-  //     this.unreadCount = count;
-  //   });
-  // }
 
   logout(): void {
     this.authService.logout().subscribe({
@@ -103,9 +52,5 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return role.includes(this.userRole);
     }
     return this.userRole === role;
-  }
-
-  ngOnDestroy(): void {
-    this.cleanupMessageListener();
   }
 }
