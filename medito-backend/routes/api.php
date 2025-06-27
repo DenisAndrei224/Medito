@@ -1,10 +1,15 @@
 <?php
 
+use App\Models\User;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BroadcastAuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Broadcast;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\TeacherController;
 
@@ -19,50 +24,50 @@ use App\Http\Controllers\TeacherController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-// Public routes
+// Authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
-// Protected routes (require authentication)
+// Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
-    // User routes
+    // Auth-related routes
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // User Profile Routes
     Route::prefix('user')->group(function () {
-        Route::get('/', function (Request $request) {
-            return $request->user();
-        });
-
-        // Profile update route
+        Route::get('/', fn(Request $request) => $request->user());
         Route::patch('/profile', [UserController::class, 'updateProfile']);
-
-        // Avatar upload route
         Route::post('/avatar', [UserController::class, 'updateAvatar']);
     });
 
-    // Logout route
-    Route::post('/logout', [AuthController::class, 'logout']);
+    // Teacher Routes
+    Route::prefix('teacher')->group(function () {
+        Route::get('/my-teacher-page', [TeacherController::class, 'myTeacherPage']);
+        Route::post('/resources', [TeacherController::class, 'storeResource']);
+        Route::get('/students', [TeacherController::class, 'getMyStudents']);
+    });
 
+    // Request Routes
+    Route::prefix('requests')->group(function () {
+        Route::post('/send', [RequestController::class, 'send']);
+        Route::get('/incoming', [RequestController::class, 'incomingRequests']);
+        Route::post('/accept', [RequestController::class, 'accept']);
+        Route::post('/deny', [RequestController::class, 'deny']);
+    });
 
+    // Message Routes
+    Route::prefix('messages')->group(function () {
+        Route::get('/', [MessageController::class, 'index']);
+        Route::post('/', [MessageController::class, 'store']);
+        Route::get('/unread-count', [MessageController::class, 'unreadCount']);
+    });
+
+    // User Listing Routes
+    Route::get('/users/teachers', [UserController::class, 'getTeachers']);
 
     // Posts resource
     Route::apiResource('posts', PostController::class);
 
-    Route::post('/requests/send', [RequestController::class, 'send']);
-    Route::get('/requests/incoming', [RequestController::class, 'incomingRequests']);
-    Route::post('/requests/accept', [RequestController::class, 'accept']);
-    Route::post('/requests/deny', [RequestController::class, 'deny']);
-
-    Route::get('/my-teacher-page', [TeacherController::class, 'myTeacherPage']);
-
-    Route::post('/teacher/resources', [TeacherController::class, 'storeResource']);
-
-    Route::get('/teacher/students', [TeacherController::class, 'getMyStudents']); // Added route for fetching students for teacher
+    // Broadcasting Authentication
+    Route::post('/broadcasting/auth', [BroadcastAuthController::class, 'authenticate']);
 });

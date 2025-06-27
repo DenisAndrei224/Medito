@@ -152,4 +152,13 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    public function getTeachers()
+    {
+        return response()->json([
+            'users' => User::where('role', 'teacher')
+                ->select(['id', 'fullName', 'email', 'avatar', 'role'])
+                ->get()
+        ]);
+    }
 }

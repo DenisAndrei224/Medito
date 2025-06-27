@@ -1,0 +1,76 @@
+<!-- messages.component.html -->
+<div class="container-fluid h-100">
+  <div class="row h-100">
+    <!-- Teachers List -->
+    <div class="col-md-3 p-0 border-end">
+      <div class="list-group list-group-flush">
+        <div
+          *ngFor="let teacher of teachers"
+          class="list-group-item list-group-item-action"
+          [class.active]="selectedTeacher?.id === teacher.id"
+          (click)="selectTeacher(teacher)"
+        >
+          <div class="d-flex align-items-center">
+            <img
+              [src]="teacher.avatar_url || 'assets/default-avatar.jpg'"
+              class="rounded-circle me-2"
+              width="40"
+              height="40"
+            />
+            <div>
+              <h6 class="mb-0">{{ teacher.fullName }}</h6>
+              <small class="text-muted">Teacher</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="col-md-9 d-flex flex-column p-0">
+      <div class="p-3 border-bottom bg-light">
+        <h5 *ngIf="selectedTeacher" class="mb-0">
+          Chat with {{ selectedTeacher.fullName }}
+        </h5>
+      </div>
+
+      <div class="flex-grow-1 p-3 overflow-auto">
+        <div *ngFor="let message of messages" class="mb-3">
+          <div [class.text-end]="message.sender_id === currentUser?.id">
+            <div
+              class="card"
+              [class.bg-primary]="message.sender_id === currentUser?.id"
+              [class.text-white]="message.sender_id === currentUser?.id"
+            >
+              <div class="card-body p-2">
+                <p class="mb-0">{{ message.content }}</p>
+                <small class="d-block text-end">
+                  {{ message.created_at | date : "shortTime" }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 border-top">
+        <div class="input-group">
+          <input
+            type="text"
+            [(ngModel)]="newMessage"
+            class="form-control"
+            placeholder="Type your message..."
+            (keyup.enter)="sendMessage()"
+          />
+          <button
+            class="btn btn-primary"
+            (click)="sendMessage()"
+            [disabled]="!newMessage.trim() || !selectedTeacher"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

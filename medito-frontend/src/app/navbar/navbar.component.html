@@ -67,6 +67,15 @@
             >Manage Resources</a
           >
         </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a class="nav-link" routerLink="/messages" routerLinkActive="active">
+            Messages
+            <!-- Optional unread count badge -->
+            <span *ngIf="unreadCount > 0" class="badge bg-danger ms-1">
+              {{ unreadCount }}
+            </span>
+          </a>
+        </li>
       </ul>
 
       <!-- Right-aligned auth controls -->
