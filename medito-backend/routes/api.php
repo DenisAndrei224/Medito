@@ -50,8 +50,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 
-
-
     // Posts resource
     Route::apiResource('posts', PostController::class);
 
