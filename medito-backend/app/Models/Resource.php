@@ -18,6 +18,9 @@ class Resource extends Model
         'file_path',
         'url',
         'type',
+        'course_id',
+        'module_id',
+        'order'
     ];
 
     /**
@@ -37,5 +40,25 @@ class Resource extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'resource_student', 'resource_id', 'student_id');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
+    }
+
+    public function scopeStandalone($query)
+    {
+        return $query->whereNull('course_id');
+    }
+
+    public function scopeForCourse($query, $courseId)
+    {
+        return $query->where('course_id', $courseId);
     }
 }
