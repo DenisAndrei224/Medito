@@ -5,62 +5,57 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\TeacherController;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
-// Protected routes (require authentication)
+// Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // User routes
     Route::prefix('user')->group(function () {
-        Route::get('/', function (Request $request) {
-            return $request->user();
-        });
-
-        // Profile update route
+        Route::get('/', fn(Request $request) => $request->user());
         Route::patch('/profile', [UserController::class, 'updateProfile']);
-
-        // Avatar upload route
         Route::post('/avatar', [UserController::class, 'updateAvatar']);
     });
 
-    // Logout route
+    // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Posts resource
+    // User management
+    Route::prefix('users')->group(function () {
+        Route::get('/by-role/{role}', [UserController::class, 'getUsersByRole']);
+    });
+
+    // Posts
     Route::apiResource('posts', PostController::class);
 
-    Route::post('/requests/send', [RequestController::class, 'send']);
-    Route::get('/requests/incoming', [RequestController::class, 'incomingRequests']);
-    Route::post('/requests/accept', [RequestController::class, 'accept']);
-    Route::post('/requests/deny', [RequestController::class, 'deny']);
+    // Requests
+    Route::prefix('requests')->group(function () {
+        Route::post('/send', [RequestController::class, 'send']);
+        Route::get('/incoming', [RequestController::class, 'incomingRequests']);
+        Route::post('/accept', [RequestController::class, 'accept']);
+        Route::post('/deny', [RequestController::class, 'deny']);
+    });
 
-    Route::get('/my-teacher-page', [TeacherController::class, 'myTeacherPage']);
+    // Teacher routes
+    Route::prefix('teacher')->group(function () {
+        Route::get('/my-teacher-page', [TeacherController::class, 'myTeacherPage']);
+        Route::post('/resources', [TeacherController::class, 'storeResource']);
+        Route::get('/students', [TeacherController::class, 'getMyStudents']);
+    });
 
-    Route::post('/teacher/resources', [TeacherController::class, 'storeResource']);
+    // Courses
+    Route::apiResource('courses', CourseController::class);
 
-    Route::get('/teacher/students', [TeacherController::class, 'getMyStudents']); // Added route for fetching students for teacher
+    // Course Students
+    Route::post('/courses/{course}/students', [CourseController::class, 'assignStudents']);
+    Route::get('/courses/{course}/students', [CourseController::class, 'getEnrolledStudents']);
+
+    // Modules
+    Route::apiResource('courses.modules', ModuleController::class)->except(['index'])->shallow();
 });

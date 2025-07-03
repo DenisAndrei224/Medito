@@ -1,0 +1,36 @@
+<!-- course-form.component.html -->
+<div class="container mt-4">
+  <h2>{{ isEditMode ? "Edit Course" : "Create New Course" }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        formControlName="title"
+      />
+      <div
+        *ngIf="form.get('title')?.invalid && form.get('title')?.touched"
+        class="text-danger"
+      >
+        Title is required
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        id="description"
+        rows="3"
+        formControlName="description"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+      {{ isEditMode ? "Update" : "Create" }}
+    </button>
+  </form>
+</div>

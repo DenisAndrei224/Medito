@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
@@ -12,7 +13,9 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'data' => Course::with(['teacher', 'modules'])->get()
+        ]);
     }
 
     /**
@@ -20,7 +23,25 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!Auth::check() || Auth::user()->role !== 'teacher') {
+            return response()->json(
+                ['error' => 'Unauthorized - Only teachers can create courses'],
+                403
+            );
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        $course = Course::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'teacher_id' => Auth::id(),
+        ]);
+
+        return response()->json($course, 201);
     }
 
     /**
@@ -28,7 +49,9 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        //
+        return response()->json(
+            $course->load(['teacher', 'modules'])
+        );
     }
 
     /**
@@ -36,7 +59,21 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        //
+        if (Auth::id() !== $course->teacher_id) {
+            return response()->json(
+                ['error' => 'Unauthorized - You do not own this course'],
+                403
+            );
+        }
+
+        $course->update(
+            $request->validate([
+                'title' => 'sometimes|string|max:255',
+                'description' => 'nullable|string|max:1000',
+            ])
+        );
+
+        return response()->json($course);
     }
 
     /**
@@ -44,6 +81,29 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        //
+        if (Auth::id() !== $course->teacher_id) {
+            return response()->json(
+                ['error' => 'Unauthorized - You do not own this course'],
+                403
+            );
+        }
+
+        $course->delete();
+
+        return response()->json([
+            'message' => 'Course deleted successfully'
+        ]);
+    }
+
+    public function assignStudents(Request $request, Course $course)
+    {
+        $request->validate(['student_ids' => 'required|array']);
+        $course->students()->sync($request->student_ids);
+        return response()->json(['message' => 'Students assigned successfully']);
+    }
+
+    public function getEnrolledStudents(Course $course)
+    {
+        return response()->json($course->students);
     }
 }

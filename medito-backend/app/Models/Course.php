@@ -2,52 +2,27 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\Module;
-use App\Models\CourseEnrollment;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Course extends Model
 {
-    use HasFactory;
+    protected $fillable = ['title', 'description', 'teacher_id'];
 
-    protected $fillable = [
-        'teacher_id',
-        'title',
-        'description',
-        'thumbnail',
-        'is_published'
-    ];
-
-    protected $casts = [
-        'is_published' => 'boolean',
-    ];
-
+    // A course belongs to a teacher (User with role 'teacher')
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
     }
 
+    // A course has many modules
     public function modules()
     {
         return $this->hasMany(Module::class);
     }
 
-    public function enrollments()
-    {
-        return $this->hasMany(CourseEnrollment::class);
-    }
-
+    // Students enrolled in this course (many-to-many)
     public function students()
     {
-        return $this->hasManyThrough(
-            User::class,
-            CourseEnrollment::class,
-            'course_id', // Foreign key on enrollments table
-            'id',        // Foreign key on users table
-            'id',        // Local key on courses table
-            'student_id' // Local key on enrollments table
-        )->where('status', 'accepted');
+        return $this->belongsToMany(User::class, 'course_student', 'course_id', 'student_id');
     }
 }

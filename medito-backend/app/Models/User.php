@@ -144,4 +144,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Request::class, 'receiver_id');
     }
+
+    // A teacher can create many courses
+    public function taughtCourses()
+    {
+        return $this->hasMany(Course::class, 'teacher_id');
+    }
+
+    // A student can enroll in many courses
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
+    }
 }

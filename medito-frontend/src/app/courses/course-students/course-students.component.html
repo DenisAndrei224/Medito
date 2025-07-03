@@ -1,0 +1,85 @@
+<!-- course-students.component.html -->
+<div class="container mt-4">
+  <h2>Manage Students for Course</h2>
+
+  <!-- Combined Message Display -->
+  <div
+    *ngIf="message"
+    class="alert"
+    [class.alert-success]="!isError"
+    [class.alert-danger]="isError"
+  >
+    {{ message }}
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Loading student data...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && allStudents.length === 0" class="alert alert-info">
+    No students available for enrollment.
+  </div>
+
+  <!-- Student List -->
+  <div *ngIf="!isLoading && allStudents.length > 0" class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title">Available Students</h5>
+      <p class="text-muted mb-3">Select students to enroll in this course</p>
+
+      <div class="list-group">
+        <div *ngFor="let student of allStudents" class="list-group-item">
+          <div class="form-check d-flex align-items-center">
+            <input
+              class="form-check-input me-3"
+              type="checkbox"
+              [id]="'student-' + student.id"
+              [checked]="selectedStudents.has(student.id)"
+              (change)="toggleStudentSelection(student.id)"
+              [disabled]="isLoading"
+            />
+            <label
+              class="form-check-label flex-grow-1"
+              [for]="'student-' + student.id"
+            >
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ student.fullName }}</strong>
+                  <div class="text-muted small">{{ student.email }}</div>
+                </div>
+                <span *ngIf="isEnrolled(student.id)" class="badge bg-success">
+                  Currently Enrolled
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex justify-content-between align-items-center">
+        <div *ngIf="selectedStudents.size > 0" class="text-muted">
+          {{ selectedStudents.size }} student(s) selected
+        </div>
+        <div *ngIf="selectedStudents.size === 0" class="text-muted">
+          No students selected
+        </div>
+
+        <button
+          class="btn btn-primary"
+          (click)="saveAssignments()"
+          [disabled]="isLoading || selectedStudents.size === 0"
+        >
+          <span
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></span>
+          {{ isLoading ? "Saving..." : "Save Assignments" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,31 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Module extends Model
 {
-    use HasFactory;
+    protected $fillable = ['title', 'content', 'course_id', 'order'];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'course_id',
-        'title',
-        'description',
-        'order'
-    ];
-
+    // A module belongs to a course
     public function course()
     {
         return $this->belongsTo(Course::class);
-    }
-
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('order');
     }
 }

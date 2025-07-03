@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User } from '../models/user.model';
+import { catchError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +34,12 @@ export class UserService {
     return this.http.get(`${this.apiUrl}/user`);
   }
 
-  getUsersByRole(role: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/user/by-role/${role}`);
+  getUsersByRole(role: string): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/users/by-role/${role}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error fetching students:', error);
+        throw error; // Let component handle the error
+      })
+    );
   }
 }

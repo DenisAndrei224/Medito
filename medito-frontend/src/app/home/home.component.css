@@ -1,0 +1,42 @@
+/* Custom purple color for Bootstrap */
+.bg-purple {
+  background-color: #6f42c1 !important;
+}
+
+/* Hero section adjustments */
+.hero-section {
+  padding: 5rem 0;
+}
+
+/* Card hover effects */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Testimonial images */
+.testimonials-section img {
+  object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 0;
+    text-align: center;
+  }
+
+  .hero-section .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .hero-section .d-flex {
+    flex-direction: column;
+  }
+}

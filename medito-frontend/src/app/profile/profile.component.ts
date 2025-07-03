@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
+import { User } from '../models/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -8,11 +9,12 @@ import { UserService } from '../services/user.service';
 })
 export class ProfileComponent implements OnInit {
   // Initialize with default values
-  user: any = {
+  user: User = {
+    id: 0,
     fullName: '',
     email: '',
     role: '',
-    avatar_url: '',
+    avatar_url: 'assets/default-avatar.jpg',
   };
 
   isEditing = false;
@@ -30,8 +32,10 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.userService.getCurrentUser().subscribe({
       next: (user) => {
-        this.user = user;
-        this.previewUrl = user.avatar_url || 'assets/default-avatar.jpg';
+        this.user = {
+          ...user,
+          avatar_url: user.avatar_url || 'assets/default-avatar.jpg',
+        };
         this.isLoading = false;
       },
       error: (err) => {
@@ -63,14 +67,15 @@ export class ProfileComponent implements OnInit {
 
     this.isLoading = true;
     this.userService.updateAvatar(this.selectedFile).subscribe({
-      next: (response) => {
-        this.user.avatar = response.avatar_url;
-        this.previewUrl = response.avatar_url;
+      next: (updatedUser) => {
+        // Use the avatar_url from response which includes full URL
+        this.user.avatar_url = updatedUser.avatar_url;
         this.selectedFile = null;
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Error uploading avatar', err);
+        this.loadUserProfile();
         this.isLoading = false;
       },
     });

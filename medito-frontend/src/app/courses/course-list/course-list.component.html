@@ -1,0 +1,49 @@
+<div class="container mt-4">
+  <h2>My Courses</h2>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Loading courses...</p>
+  </div>
+
+  <!-- Courses List -->
+  <div *ngIf="!isLoading" class="row">
+    <div *ngFor="let course of courses" class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ course.title }}</h5>
+          <p class="card-text">
+            {{ course.description || "No description available" }}
+          </p>
+        </div>
+        <div class="card-footer">
+          <a
+            [routerLink]="['/teacher/courses', course.id, 'students']"
+            class="btn btn-sm btn-outline-primary me-2"
+          >
+            Manage Students
+          </a>
+          <a
+            [routerLink]="['/teacher/courses', course.id, 'edit']"
+            class="btn btn-sm btn-outline-secondary"
+          >
+            Edit
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && courses.length === 0" class="alert alert-info">
+    No courses found. Create your first course to get started!
+  </div>
+</div>
