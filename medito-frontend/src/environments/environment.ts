@@ -6,6 +6,10 @@ export const environment = {
   production: false,
   apiUrl: 'http://localhost:8000/api', // Your Laravel API URL
   baseUrl: 'http://localhost:8000', // Your Laravel base URL (for storage files)
+  pusher: {
+    key: '8eabfc66155b85bbfa69',
+    cluster: 'eu',
+  },
 };
 
 /*

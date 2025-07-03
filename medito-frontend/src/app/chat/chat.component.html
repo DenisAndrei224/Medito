@@ -1,0 +1,72 @@
+<div class="container-fluid p-0 h-100">
+  <div class="card h-100 border-0 shadow-sm">
+    <!-- Chat header -->
+    <div class="card-header bg-primary text-white p-3">
+      <h5 class="mb-0">Chat</h5>
+    </div>
+
+    <!-- Messages container -->
+    <div class="card-body p-0 d-flex flex-column">
+      <div class="flex-grow-1 overflow-auto p-3" style="max-height: 60vh">
+        <div
+          *ngFor="let message of messages"
+          class="mb-3 p-3 rounded"
+          [class.bg-primary]="
+            message.user.id === authService.currentUserValue?.id
+          "
+          [class.text-white]="
+            message.user.id === authService.currentUserValue?.id
+          "
+          [class.bg-light]="
+            message.user.id !== authService.currentUserValue?.id
+          "
+        >
+          <div class="d-flex align-items-center mb-2">
+            <img
+              [src]="message.user.avatar_url || 'assets/default-avatar.jpg'"
+              class="rounded-circle me-2"
+              width="40"
+              height="40"
+              alt="User avatar"
+              onerror="this.src='assets/default-avatar.jpg'"
+            />
+            <div>
+              <strong class="d-block">{{ message.user.name }}</strong>
+              <small
+                [class.text-white-50]="
+                  message.user.id === authService.currentUserValue?.id
+                "
+                [class.text-muted]="
+                  message.user.id !== authService.currentUserValue?.id
+                "
+              >
+                {{ message.created_at | date : "shortTime" }}
+              </small>
+            </div>
+          </div>
+          <p class="mb-0">{{ message.message }}</p>
+        </div>
+      </div>
+
+      <!-- Message input -->
+      <div class="border-top p-3">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newMessage"
+            (keyup.enter)="sendMessage()"
+            placeholder="Type your message..."
+          />
+          <button
+            class="btn btn-primary"
+            (click)="sendMessage()"
+            [disabled]="!newMessage.trim()"
+          >
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

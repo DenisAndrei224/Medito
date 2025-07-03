@@ -23,6 +23,7 @@ import { CourseFormComponent } from './courses/course-form/course-form.component
 import { CourseStudentsComponent } from './courses/course-students/course-students.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { AboutComponent } from './about/about.component';
     CourseStudentsComponent,
     HomeComponent,
     AboutComponent,
+    ChatComponent,
   ],
   imports: [
     BrowserModule,

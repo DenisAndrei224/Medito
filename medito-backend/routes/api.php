@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseController;
@@ -58,4 +59,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Modules
     Route::apiResource('courses.modules', ModuleController::class)->except(['index'])->shallow();
+
+    // Chat routes
+    Route::prefix('chat')->group(function () {
+        Route::get('/messages', [ChatController::class, 'getMessages']);
+        Route::post('/send', [ChatController::class, 'sendMessage']);
+    });
 });

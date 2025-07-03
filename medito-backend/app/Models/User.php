@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Message;
 
 class User extends Authenticatable
 {
@@ -155,5 +156,13 @@ class User extends Authenticatable
     public function enrolledCourses()
     {
         return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
+    }
+
+    /**
+     * Get the messages for the user.
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
     }
 }

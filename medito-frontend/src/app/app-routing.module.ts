@@ -17,6 +17,7 @@ import { CourseFormComponent } from './courses/course-form/course-form.component
 import { CourseStudentsComponent } from './courses/course-students/course-students.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
+import { ChatComponent } from './chat/chat.component';
 const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
@@ -64,6 +65,11 @@ const routes: Routes = [
       { path: ':id/edit', component: CourseFormComponent },
       { path: ':id/students', component: CourseStudentsComponent },
     ],
+  },
+  {
+    path: 'chat',
+    component: ChatComponent,
+    canActivate: [AuthGuard],
   },
 ];
 

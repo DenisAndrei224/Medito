@@ -72,6 +72,11 @@
             >Manage Resources</a
           >
         </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a class="nav-link" routerLink="/chat" routerLinkActive="active">
+            <i class="bi bi-chat-left-text me-1"></i> Chat
+          </a>
+        </li>
       </ul>
 
       <!-- Right-aligned auth controls -->
